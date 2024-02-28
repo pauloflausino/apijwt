@@ -11,14 +11,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser()); 
 
+
+/**Ao invés de banco estou usando um array de usuários emulando registros de um Database  */
 const users = [
     {id: 1, username: 'user1', password: 'password1'},
     {id: 2, username: 'user2', password: 'password2'}
 ];
 
-app.get('/', (req, res, next) => {
-    res.json({message: "Tudo ok por aqui! APP funcionando!"});
-})
 
 const authenticate = (username, password) => {
     const userAuth = users.find(u => u.username === username && u.password === password);
@@ -30,22 +29,9 @@ const generateToken = (user) => {
     return token;
 };
 
-//authentication
-/*
-app.post('/login', (req, res, next) => {
-    //esse teste abaixo deve ser feito no seu banco de dados
-    if(req.body.user === 'luizinho' && req.body.pwd === '123'){
-      //auth ok
-      const id = 1; //esse id viria do banco de dados
-      var token = jwt.sign({ id }, process.env.SECRET, {
-        expiresIn: 300 // expires in 5min
-      });
-      return res.json({ auth: true, token: token });
-    }
-    
-    res.status(500).json({message: 'Login inválido!'});
+app.get('/', (req, res, next) => {
+    res.json({message: "Tudo ok por aqui! APP funcionando!"});
 })
-*/
 
 app.post('/login', (req, res, next) => {  
 
@@ -62,6 +48,10 @@ app.post('/login', (req, res, next) => {
         return res.status(403).json({ error: 'Forbidden'});
     }
 });
+
+app.post('/logout', function(req, res) {
+    res.json({ auth: false, token: null });
+})
 
 var server = http.createServer(app); 
 server.listen(3000);
